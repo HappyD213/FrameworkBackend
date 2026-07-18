@@ -1,9 +1,9 @@
 import json
 import curlify
 import requests
-from logging import Logger
 from requests import Session
 
+from logger.logger import Logger
 from utils.jsons_utils import JsonUtils
 
 
