@@ -1,4 +1,3 @@
-import requests
 from faker import Faker
 from random import choice
 
