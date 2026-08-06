@@ -1,10 +1,10 @@
 from faker import Faker
 from random import choice
 
-from helpers.authorization_helper import AuthorizationHelper
-from helpers.group_helper import GroupHelper
-from helpers.student_helper import StudentHelper
-from helpers.user_helper import UserHelper
+from services.auth.helpers.authorization_helper import AuthorizationHelper
+from services.university.helpers.group_helper import GroupHelper
+from services.university.helpers.student_helper import StudentHelper
+from services.auth.helpers.user_helper import UserHelper
 from utils.api_utils import ApiUtils
 
 AUTH_URL = "http://127.0.0.1:8000"
