@@ -1,6 +1,6 @@
 import requests
 
-from helpers.base_helper import BaseHelper
+from services.general.helpers.base_helper import BaseHelper
 
 
 class UserHelper(BaseHelper):
@@ -9,3 +9,4 @@ class UserHelper(BaseHelper):
 
     def get_me(self) -> requests.Response:
         response = self.api_utils.get(self.ME_ENDPOINT)
+        return response
