@@ -5,7 +5,6 @@ from services.auth.auth_service import AuthService
 from services.auth.helpers.authorization_helper import AuthorizationHelper
 from services.auth.models.login_request import LoginRequest
 from services.auth.models.register_request import RegisterRequest
-from services.general.models.success_response import SuccessResponse
 from services.university.university_service import UniversityService
 from utils.api_utils import ApiUtils
 
@@ -51,13 +50,6 @@ def register_request():
         password_repeat=password,
         email=faker.email(),
     )
-
-
-@pytest.fixture(scope="function", autouse=False)
-def register_response(register_request, auth_service_anonym):
-    response = auth_service_anonym.register_user(register_request=register_request)
-
-    return response
 
 
 @pytest.fixture(scope="function", autouse=False)
