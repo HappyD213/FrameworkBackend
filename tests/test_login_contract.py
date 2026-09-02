@@ -6,32 +6,8 @@ from faker import Faker
 faker = Faker()
 
 
-class TestAuthContract:
-    def test_user_register_success(self, auth_api_utils_anonym):
-        authorization_helper = AuthorizationHelper(auth_api_utils_anonym)
-        password = faker.password(
-            length=30,
-            special_chars=True,
-            digits=True,
-            upper_case=True,
-            lower_case=True,
-        )
-
-        register_data = {
-            "username": faker.user_name(),
-            "password": password,
-            "password_repeat": password,
-            "email": faker.email(),
-        }
-
-        response = authorization_helper.post_register(register_data)
-
-        assert response.status_code == 201, \
-            (f"Wrong status code. "
-             f"Actual: {response.status_code} "
-             f"Expected: 201")
-
-    def test_user_register_conflict(self, auth_api_utils_anonym):
+class TestLoginContract:
+    def test_login_success(self, auth_api_utils_anonym):
         authorization_helper = AuthorizationHelper(auth_api_utils_anonym)
         password = faker.password(
             length=30,
@@ -48,17 +24,66 @@ class TestAuthContract:
             "email": faker.email(),
         }
         authorization_helper.post_register(register_data)
-        response = authorization_helper.post_register(register_data)
 
-        assert response.status_code == requests.status_codes.codes.conflict, \
+        response = authorization_helper.post_login({
+            "username": register_data.get("username"),
+            "password": register_data.get("password")
+        })
+
+        assert response.status_code == requests.status_codes.codes.ok, \
             (f"Wrong status code. "
              f"Actual: {response.status_code} "
-             f"Expected: 409")
+             f"Expected: 422")
 
-    def test_user_register_validation_error(self, auth_api_utils_anonym):
+    def test_login_invalid_login_credentials(self, auth_api_utils_anonym):
         authorization_helper = AuthorizationHelper(auth_api_utils_anonym)
+        password = faker.password(
+            length=30,
+            special_chars=True,
+            digits=True,
+            upper_case=True,
+            lower_case=True,
+        )
 
-        response = authorization_helper.post_register({"username": "username"})
+        register_data = {
+            "username": faker.user_name(),
+            "password": password,
+            "password_repeat": password,
+            "email": faker.email(),
+        }
+        authorization_helper.post_register(register_data)
+
+        username = register_data.get("username")
+
+        response = authorization_helper.post_login({
+            "username": username,
+            "password": "wrong password"
+        })
+
+        assert response.status_code == requests.status_codes.codes.unauthorized, \
+            (f"Wrong status code. "
+             f"Actual: {response.status_code} "
+             f"Expected: 422")
+
+    def test_login_validation_error(self, auth_api_utils_anonym):
+        authorization_helper = AuthorizationHelper(auth_api_utils_anonym)
+        password = faker.password(
+            length=30,
+            special_chars=True,
+            digits=True,
+            upper_case=True,
+            lower_case=True,
+        )
+
+        register_data = {
+            "username": faker.user_name(),
+            "password": password,
+            "password_repeat": password,
+            "email": faker.email(),
+        }
+        authorization_helper.post_register(register_data)
+
+        response = authorization_helper.post_login({"username": "username"})
 
         assert response.status_code == requests.status_codes.codes.unprocessable, \
             (f"Wrong status code. "
