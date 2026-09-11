@@ -1,5 +1,3 @@
-import requests.status_codes
-
 from services.auth.helpers.authorization_helper import AuthorizationHelper
 from faker import Faker
 
@@ -25,11 +23,12 @@ class TestAuthContract:
         }
 
         response = authorization_helper.post_register(register_data)
+        expected_code = 201
 
-        assert response.status_code == 201, \
+        assert response.status_code == expected_code, \
             (f"Wrong status code. "
              f"Actual: {response.status_code} "
-             f"Expected: 201")
+             f"Expected: {expected_code}")
 
     def test_user_register_conflict(self, auth_api_utils_anonym):
         authorization_helper = AuthorizationHelper(auth_api_utils_anonym)
@@ -49,18 +48,20 @@ class TestAuthContract:
         }
         authorization_helper.post_register(register_data)
         response = authorization_helper.post_register(register_data)
+        expected_code = 409
 
-        assert response.status_code == requests.status_codes.codes.conflict, \
+        assert response.status_code == expected_code, \
             (f"Wrong status code. "
              f"Actual: {response.status_code} "
-             f"Expected: 409")
+             f"Expected: {expected_code}")
 
     def test_user_register_validation_error(self, auth_api_utils_anonym):
         authorization_helper = AuthorizationHelper(auth_api_utils_anonym)
 
         response = authorization_helper.post_register({"username": "username"})
+        expected_code = 422
 
-        assert response.status_code == requests.status_codes.codes.unprocessable, \
+        assert response.status_code == expected_code, \
             (f"Wrong status code. "
              f"Actual: {response.status_code} "
-             f"Expected: 422")
+             f"Expected: {expected_code}")
