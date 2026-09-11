@@ -1,5 +1,3 @@
-import requests.status_codes
-
 from services.auth.helpers.authorization_helper import AuthorizationHelper
 from faker import Faker
 
@@ -29,11 +27,12 @@ class TestLoginContract:
             "username": register_data.get("username"),
             "password": register_data.get("password")
         })
+        expected_code = 200
 
-        assert response.status_code == requests.status_codes.codes.ok, \
+        assert response.status_code == expected_code, \
             (f"Wrong status code. "
              f"Actual: {response.status_code} "
-             f"Expected: 422")
+             f"Expected: {expected_code}")
 
     def test_login_invalid_login_credentials(self, auth_api_utils_anonym):
         authorization_helper = AuthorizationHelper(auth_api_utils_anonym)
@@ -59,11 +58,12 @@ class TestLoginContract:
             "username": username,
             "password": "wrong password"
         })
+        expected_code = 401
 
-        assert response.status_code == requests.status_codes.codes.unauthorized, \
+        assert response.status_code == expected_code, \
             (f"Wrong status code. "
              f"Actual: {response.status_code} "
-             f"Expected: 422")
+             f"Expected: {expected_code}")
 
     def test_login_validation_error(self, auth_api_utils_anonym):
         authorization_helper = AuthorizationHelper(auth_api_utils_anonym)
@@ -84,8 +84,9 @@ class TestLoginContract:
         authorization_helper.post_register(register_data)
 
         response = authorization_helper.post_login({"username": "username"})
+        expected_code = 422
 
-        assert response.status_code == requests.status_codes.codes.unprocessable, \
+        assert response.status_code == expected_code, \
             (f"Wrong status code. "
              f"Actual: {response.status_code} "
-             f"Expected: 422")
+             f"Expected: {expected_code}")

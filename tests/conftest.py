@@ -1,3 +1,5 @@
+from random import choice
+
 import pytest
 
 from faker import Faker
@@ -5,6 +7,11 @@ from services.auth.auth_service import AuthService
 from services.auth.helpers.authorization_helper import AuthorizationHelper
 from services.auth.models.login_request import LoginRequest
 from services.auth.models.register_request import RegisterRequest
+from services.university.models.base_student import DegreeEnum
+from services.university.models.base_teacher import SubjectEnum
+from services.university.models.group_request import GroupRequest
+from services.university.models.student_request import StudentRequest
+from services.university.models.teacher_request import TeacherRequest
 from services.university.university_service import UniversityService
 from utils.api_utils import ApiUtils
 
@@ -53,6 +60,32 @@ def register_request():
 
 
 @pytest.fixture(scope="function", autouse=False)
+def group_request():
+    return GroupRequest(name=faker.name())
+
+
+@pytest.fixture
+def student_request():
+    return StudentRequest(
+        first_name=faker.first_name(),
+        last_name=faker.last_name(),
+        email=faker.email(),
+        degree=choice(list(DegreeEnum)),
+        phone=faker.numerify("+7##########"),
+        group_id=1,
+    )
+
+
+@pytest.fixture(scope="function", autouse=False)
+def teacher_request():
+    return TeacherRequest(
+        first_name=faker.first_name(),
+        last_name=faker.last_name(),
+        subject=choice(list(SubjectEnum)),
+    )
+
+
+@pytest.fixture(scope="function", autouse=False)
 def registered_user_data(auth_service_anonym, register_request):
     auth_service_anonym.register_user(register_request=register_request)
 
@@ -89,20 +122,3 @@ def auth_api_utils_admin(access_token):
 def university_api_utils_admin(access_token):
     api_utils = ApiUtils(url=UniversityService.SERVICE_URL, headers={"Authorization": f"Bearer {access_token}"})
     return api_utils
-
-
-@pytest.fixture(scope="function", autouse=False)
-def data_for_success_register():
-    password = faker.password(
-        length=30,
-        special_chars=True,
-        digits=True,
-        upper_case=True,
-        lower_case=True,
-    )
-    return {
-        "username": faker.user_name(),
-        "password": password,
-        "password_repeat": password,
-        "email": faker.email(),
-    }
