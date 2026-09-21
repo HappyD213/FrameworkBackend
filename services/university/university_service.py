@@ -3,7 +3,6 @@ from services.university.helpers.grade_helper import GradeHelper
 from services.university.helpers.group_helper import GroupHelper
 from services.university.helpers.student_helper import StudentHelper
 from services.university.helpers.teacher_helper import TeacherHelper
-from services.university.models.get_grades_request import GetGradesRequest
 from services.university.models.grade_request import GradeRequest
 from services.university.models.grade_response import GradeResponse
 from services.university.models.grade_statistic_response import GradeStatisticResponse
@@ -46,17 +45,17 @@ class UniversityService(BaseService):
         )
         return GradeResponse.model_validate(response.json())
 
-    def get_grades(self, request: GetGradesRequest) -> GradesListResponse:
+    def get_grades(self, params: dict) -> GradesListResponse:
         response = self.grade_helper.get_grades(
-            params=request.model_dump()
+            params=params
         )
         return GradesListResponse.model_validate(response.json())
 
     def get_grade_statistics(
             self,
-            request: GetGradesRequest,
+            params: dict,
     ) -> GradeStatisticResponse:
         response = self.grade_helper.get_grades_stats(
-            params=request.model_dump()
+            params=params
         )
         return GradeStatisticResponse.model_validate(response.json())
