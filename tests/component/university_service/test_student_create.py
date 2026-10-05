@@ -25,4 +25,8 @@ class TestStudent:
                                  group_id=group_response.id)
         student_response = university_service.create_student(student)
 
-        assert student_response.group_id == group_response.id
+        expected_id = group_response.id
+        actual_id = student_response.group_id
+
+        assert actual_id == expected_id, \
+            f"Expected: '{expected_id}', but got: '{actual_id}'"

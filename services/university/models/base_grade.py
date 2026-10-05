@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class BaseGrade(BaseModel):
@@ -6,4 +6,4 @@ class BaseGrade(BaseModel):
 
     teacher_id: int
     student_id: int
-    grade: int
+    grade: int = Field(ge=0, le=5)

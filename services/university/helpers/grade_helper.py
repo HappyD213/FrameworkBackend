@@ -15,14 +15,24 @@ class GradeHelper(BaseHelper):
             data=data,
         )
 
-    def get_grades(self, params: dict) -> requests.Response:
+    def get_grades(self, student_id: int, teacher_id: int, group_id: int) -> requests.Response:
+        params = {
+            "student_id": student_id,
+            "teacher_id": teacher_id,
+            "group_id": group_id,
+        }
         response = self.api_utils.get(
             self.ROOT_ENDPOINT,
             params=params,
         )
         return response
 
-    def get_grades_stats(self, params: dict) -> requests.Response:
+    def get_grades_stats(self, student_id: int, teacher_id: int, group_id: int) -> requests.Response:
+        params = {
+            "student_id": student_id,
+            "teacher_id": teacher_id,
+            "group_id": group_id,
+        }
         response = self.api_utils.get(
             self.STATS_ENDPOINT,
             params=params,

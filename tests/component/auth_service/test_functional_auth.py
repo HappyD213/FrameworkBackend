@@ -1,3 +1,4 @@
+import jwt
 from services.auth.models.login_request import LoginRequest
 from services.auth.models.validation_error_response import ValidationErrorResponse
 from services.general.models.success_response import SuccessResponse
@@ -17,7 +18,7 @@ class TestAuthRegister:
         expected_detail = "Username is already taken"
 
         assert response.detail == expected_detail, \
-            f"Expected: {expected_detail}, but got: {response.detail}"
+            f"Expected: '{expected_detail}', but got: '{response.detail}'"
 
     def test_user_validation_error(self, auth_helper_anonym):
         response = auth_helper_anonym.post_register(
@@ -40,7 +41,7 @@ class TestAuthRegister:
         )
 
         assert actual == expected, \
-            f"Expected: {expected}, but got: {actual}"
+            f"Expected: '{expected}', but got: '{actual}'"
 
 
 class TestAuthLogin:
@@ -49,9 +50,19 @@ class TestAuthLogin:
         login_response = auth_service_anonym.login_user(LoginRequest(username=register_request.username,
                                                                      password=register_request.password))
 
+        access_token = login_response.access_token
+        header = jwt.get_unverified_header(access_token)
+        payload = jwt.decode(
+            access_token,
+            options={"verify_signature": False},
+        )
+        expected_typ = "JWT"
+        expected_alg = "RS256"
+
         with SoftAssert() as soft:
-            soft.check(login_response.access_token != "")
-            soft.check(login_response.token_type == "Bearer")
+            soft.check(header["typ"] == expected_typ)
+            soft.check(header["alg"] == expected_alg)
+            soft.check(payload["username"] == register_request.username)
 
     def test_invalid_login_credentials(self, registered_user_data, auth_helper_anonym):
         response = auth_helper_anonym.post_login(
@@ -63,7 +74,7 @@ class TestAuthLogin:
         error = SuccessResponse.model_validate(response.json())
 
         assert error.detail == expected_detail, \
-            f"Expected: {expected_detail}, but got: {error.detail}"
+            f"Expected: '{expected_detail}', but got: '{error.detail}'"
 
     def test_validation_error(self, registered_user_data, auth_helper_anonym):
         response = auth_helper_anonym.post_login(data={"username": registered_user_data.username})
@@ -83,4 +94,4 @@ class TestAuthLogin:
         )
 
         assert actual == expected, \
-            f"Expected: {expected}, but got: {actual}"
+            f"Expected: '{expected}', but got: '{actual}'"
