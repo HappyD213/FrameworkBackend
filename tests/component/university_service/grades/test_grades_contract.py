@@ -35,7 +35,7 @@ class TestGradeContract:
         expected_code = 200
 
         assert response.status_code == expected_code, \
-            f"Expected: {expected_code} but got {response.status_code}"
+            f"Expected: '{expected_code}' but got '{response.status_code}'"
 
     def test_get_grades_stats_not_authorized(self):
         headers = {"Authorization": f"Bearer dawdadad"}
@@ -53,7 +53,7 @@ class TestGradeContract:
         expected_code = 401
 
         assert response.status_code == expected_code, \
-            f"Expected: {expected_code}, but got: {response.status_code}"
+            f"Expected: '{expected_code}', but got: '{response.status_code}'"
 
     def test_get_grades_stats_forbidden(self, university_api_utils_anonym):
         grade_helper = GradeHelper(university_api_utils_anonym)
@@ -68,12 +68,12 @@ class TestGradeContract:
         expected_code = 403
 
         assert response.status_code == expected_code, \
-            f"Expected: {expected_code}, but got: {response.status_code}"
+            f"Expected: '{expected_code}', but got: '{response.status_code}'"
 
     def test_get_grades_stats_validation_error(self, university_api_utils_admin):
         grade_helper = GradeHelper(university_api_utils_admin)
         params = {
-            "student_id": 1,
+            "teacher_id": 3,
         }
 
         response = grade_helper.get_grades_stats(params=params)
@@ -81,4 +81,4 @@ class TestGradeContract:
         expected_code = 422
 
         assert response.status_code == expected_code, \
-            f"Expected: {expected_code}, but got: {response.status_code}"
+            f"Expected: '{expected_code}', but got: '{response.status_code}'"

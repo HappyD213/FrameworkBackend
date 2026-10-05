@@ -62,8 +62,8 @@ class TestLoginContract:
 
         assert response.status_code == expected_code, \
             (f"Wrong status code. "
-             f"Actual: {response.status_code} "
-             f"Expected: {expected_code}")
+             f"Actual: '{response.status_code}' "
+             f"Expected: '{expected_code}'")
 
     def test_login_validation_error(self, auth_api_utils_anonym):
         authorization_helper = AuthorizationHelper(auth_api_utils_anonym)
@@ -88,5 +88,5 @@ class TestLoginContract:
 
         assert response.status_code == expected_code, \
             (f"Wrong status code. "
-             f"Actual: {response.status_code} "
-             f"Expected: {expected_code}")
+             f"Actual: '{response.status_code}' "
+             f"Expected: '{expected_code}'")

@@ -31,14 +31,10 @@ class TestGradeFunctional:
             avg=sum(grades) / len(grades),
         )
 
-        params = {
-            "student_id": student.id,
-            "teacher_id": teacher.id,
-            "group_id": group.id,
-        }
-
         actual_stats = university_service.get_grade_statistics(
-            params=params
+            student_id=student.id,
+            teacher_id=teacher.id,
+            group_id=group.id,
         )
 
         assert actual_stats == expected_stats, (
@@ -50,13 +46,8 @@ class TestGradeFunctional:
         api_utils = ApiUtils(url=UniversityService.SERVICE_URL, headers=headers)
 
         grade_helper = GradeHelper(api_utils)
-        params = {
-            "student_id": 1,
-            "teacher_id": 1,
-            "group_id": 1,
-        }
 
-        response = grade_helper.get_grades_stats(params=params)
+        response = grade_helper.get_grades_stats(student_id=1, teacher_id=1, group_id=1)
 
         expected = {"detail": "Invalid JWT token"}
         actual = response.json()
@@ -66,13 +57,8 @@ class TestGradeFunctional:
 
     def test_get_grades_stats_forbidden(self, university_api_utils_anonym):
         grade_helper = GradeHelper(university_api_utils_anonym)
-        params = {
-            "student_id": 1,
-            "teacher_id": 1,
-            "group_id": 1,
-        }
 
-        response = grade_helper.get_grades_stats(params=params)
+        response = grade_helper.get_grades_stats(student_id=1, teacher_id=1, group_id=1)
 
         expected = {"detail": "Access denied"}
         actual = response.json()

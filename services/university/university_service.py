@@ -45,17 +45,23 @@ class UniversityService(BaseService):
         )
         return GradeResponse.model_validate(response.json())
 
-    def get_grades(self, params: dict) -> GradesListResponse:
+    def get_grades(self, student_id: int, teacher_id: int, group_id: int) -> GradesListResponse:
         response = self.grade_helper.get_grades(
-            params=params
+            student_id=student_id,
+            teacher_id=teacher_id,
+            group_id=group_id
         )
         return GradesListResponse.model_validate(response.json())
 
     def get_grade_statistics(
             self,
-            params: dict,
+            student_id: int,
+            teacher_id: int,
+            group_id: int,
     ) -> GradeStatisticResponse:
         response = self.grade_helper.get_grades_stats(
-            params=params
+            student_id=student_id,
+            teacher_id=teacher_id,
+            group_id=group_id
         )
         return GradeStatisticResponse.model_validate(response.json())
