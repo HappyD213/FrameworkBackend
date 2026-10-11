@@ -15,11 +15,18 @@ class GradeHelper(BaseHelper):
             data=data,
         )
 
-    def get_grades(self, student_id: int, teacher_id: int, group_id: int) -> requests.Response:
+    def get_grades(self,
+                   student_id: int | None = None,
+                   teacher_id: int | None = None,
+                   group_id: int | None = None) \
+            -> requests.Response:
         params = {
             "student_id": student_id,
             "teacher_id": teacher_id,
             "group_id": group_id,
+        }
+        params = {
+            key: value for key, value in params.items() if value is not None
         }
         response = self.api_utils.get(
             self.ROOT_ENDPOINT,
@@ -27,11 +34,18 @@ class GradeHelper(BaseHelper):
         )
         return response
 
-    def get_grades_stats(self, student_id: int, teacher_id: int, group_id: int) -> requests.Response:
+    def get_grades_stats(self,
+                         student_id: int | None = None,
+                         teacher_id: int | None = None,
+                         group_id: int | None = None) \
+            -> requests.Response:
         params = {
             "student_id": student_id,
             "teacher_id": teacher_id,
             "group_id": group_id,
+        }
+        params = {
+            key: value for key, value in params.items() if value is not None
         }
         response = self.api_utils.get(
             self.STATS_ENDPOINT,
