@@ -23,14 +23,8 @@ class TestGradeContract:
             grades=grades,
         )
 
-        params = {
-            "student_id": student.id,
-            "teacher_id": teacher.id,
-            "group_id": group.id,
-        }
-
         grade_helper = GradeHelper(university_api_utils_admin)
-        response = grade_helper.get_grades_stats(params=params)
+        response = grade_helper.get_grades_stats(student_id=student.id, teacher_id=teacher.id, group_id=group.id)
 
         expected_code = 200
 
@@ -42,13 +36,8 @@ class TestGradeContract:
         api_utils = ApiUtils(url=UniversityService.SERVICE_URL, headers=headers)
 
         grade_helper = GradeHelper(api_utils)
-        params = {
-            "student_id": 1,
-            "teacher_id": 1,
-            "group_id": 1,
-        }
 
-        response = grade_helper.get_grades_stats(params=params)
+        response = grade_helper.get_grades_stats(student_id=1, teacher_id=1, group_id=1)
 
         expected_code = 401
 
@@ -57,13 +46,8 @@ class TestGradeContract:
 
     def test_get_grades_stats_forbidden(self, university_api_utils_anonym):
         grade_helper = GradeHelper(university_api_utils_anonym)
-        params = {
-            "student_id": 1,
-            "teacher_id": 1,
-            "group_id": 1,
-        }
 
-        response = grade_helper.get_grades_stats(params=params)
+        response = grade_helper.get_grades_stats(student_id=1, teacher_id=1, group_id=1)
 
         expected_code = 403
 
@@ -72,11 +56,8 @@ class TestGradeContract:
 
     def test_get_grades_stats_validation_error(self, university_api_utils_admin):
         grade_helper = GradeHelper(university_api_utils_admin)
-        params = {
-            "teacher_id": 3,
-        }
 
-        response = grade_helper.get_grades_stats(params=params)
+        response = grade_helper.get_grades_stats(student_id="dwadadada")
 
         expected_code = 422
 
