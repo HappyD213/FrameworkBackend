@@ -93,6 +93,24 @@ def registered_user_data(auth_service_anonym, register_request):
 
 
 @pytest.fixture(scope="function", autouse=False)
+def student(university_service_admin, student_request):
+    student = university_service_admin.create_student(student_request)
+    return student
+
+
+@pytest.fixture(scope="function", autouse=False)
+def teacher(university_service_admin, teacher_request):
+    teacher = university_service_admin.create_teacher(teacher_request)
+    return teacher
+
+
+@pytest.fixture(scope="function", autouse=False)
+def group(university_service_admin, group_request):
+    group = university_service_admin.create_group(group_request)
+    return group
+
+
+@pytest.fixture(scope="function", autouse=False)
 def access_token(auth_service_anonym, registered_user_data):
     username = registered_user_data.username
     password = registered_user_data.password
@@ -122,3 +140,9 @@ def auth_api_utils_admin(access_token):
 def university_api_utils_admin(access_token):
     api_utils = ApiUtils(url=UniversityService.SERVICE_URL, headers={"Authorization": f"Bearer {access_token}"})
     return api_utils
+
+
+@pytest.fixture(scope="function", autouse=False)
+def university_service_admin(university_api_utils_admin):
+    university_service = UniversityService(university_api_utils_admin)
+    return university_service

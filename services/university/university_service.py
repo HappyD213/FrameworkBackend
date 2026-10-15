@@ -45,23 +45,36 @@ class UniversityService(BaseService):
         )
         return GradeResponse.model_validate(response.json())
 
-    def get_grades(self, student_id: int, teacher_id: int, group_id: int) -> GradesListResponse:
-        response = self.grade_helper.get_grades(
-            student_id=student_id,
-            teacher_id=teacher_id,
-            group_id=group_id
-        )
+    def get_grades(
+            self,
+            student_id: int | None = None,
+            teacher_id: int | None = None,
+            group_id: int | None = None
+    ) -> GradesListResponse:
+        filters = {
+            "student_id": student_id,
+            "teacher_id": teacher_id,
+            "group_id": group_id,
+        }
+        filters = {
+            key: value for key, value in filters.items() if value is not None
+        }
+        response = self.grade_helper.get_grades(**filters)
         return GradesListResponse.model_validate(response.json())
 
     def get_grade_statistics(
             self,
-            student_id: int,
-            teacher_id: int,
-            group_id: int,
+            student_id: int | None = None,
+            teacher_id: int | None = None,
+            group_id: int | None = None,
     ) -> GradeStatisticResponse:
-        response = self.grade_helper.get_grades_stats(
-            student_id=student_id,
-            teacher_id=teacher_id,
-            group_id=group_id
-        )
+        filters = {
+            "student_id": student_id,
+            "teacher_id": teacher_id,
+            "group_id": group_id,
+        }
+        filters = {
+            key: value for key, value in filters.items() if value is not None
+        }
+        response = self.grade_helper.get_grades_stats(**filters)
         return GradeStatisticResponse.model_validate(response.json())
