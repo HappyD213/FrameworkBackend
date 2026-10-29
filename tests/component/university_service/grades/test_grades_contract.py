@@ -8,32 +8,28 @@ class TestGradeContract:
     def test_get_grades_stats_success(
             self,
             university_api_utils_admin,
-            register_request,
-            group_request,
-            student_request,
-            teacher_request,
+            group,
+            student_in_group,
+            teacher,
     ):
         university_service = UniversityService(university_api_utils_admin)
-        group = university_service.create_group(group_request)
-        student_request.group_id = group.id
-
-        student = university_service.create_student(student_request)
-        teacher = university_service.create_teacher(teacher_request)
 
         steps = UniversitySteps(university_service)
         grades = [5, 4, 3]
+
         steps.create_grades(
             teacher_id=teacher.id,
-            student_id=student.id,
+            student_id=student_in_group.id,
             grades=grades,
         )
 
         grade_helper = GradeHelper(university_api_utils_admin)
         response = grade_helper.get_grades_stats(
-            student_id=student.id,
+            student_id=student_in_group.id,
             teacher_id=teacher.id,
             group_id=group.id,
         )
+
         expected_code = 200
 
         assert response.status_code == expected_code, \

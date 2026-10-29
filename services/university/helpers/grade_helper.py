@@ -15,6 +15,11 @@ class GradeHelper(BaseHelper):
             data=data,
         )
 
+    def delete_grade(self, grade_id: int) -> requests.Response:
+        endpoint = f"{self.ROOT_ENDPOINT}{grade_id}/"
+        response = self.api_utils.delete(endpoint)
+        return response
+
     def get_grades(self,
                    student_id: int | None = None,
                    teacher_id: int | None = None,

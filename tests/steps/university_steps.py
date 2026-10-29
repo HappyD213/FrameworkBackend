@@ -20,4 +20,4 @@ class UniversitySteps:
                 grade=grade,
             )
 
-            self.university_service.create_grade(grade_request)
+            self.university_service.grade.create_grade(grade_request)
