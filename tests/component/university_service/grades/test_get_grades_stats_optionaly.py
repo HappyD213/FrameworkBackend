@@ -1,51 +1,242 @@
-from factories.group_factory import GroupFactory
-from factories.student_factory import StudentFactory
-from factories.teacher_factory import TeacherFactory
 from services.university.models.grade_statistic_response import GradeStatisticResponse
 from tests.steps.university_steps import UniversitySteps
+from utils.test_data import TestData
 
 
 class TestGetGradesStats:
-    def test_get_grades_stats_with_combined_filters(
+
+    def test_get_grades_stats_with_student_filter(
             self,
             university_service_admin,
-            group,
-            student_in_group,
-            teacher,
+            group_factory,
+            student_factory,
+            teacher_factory,
     ):
         steps = UniversitySteps(university_service_admin)
 
-        another_group_request = GroupFactory.build()
-        another_group = university_service_admin.group.create_group(
-            another_group_request
+        group = group_factory.create(
+            group_request=TestData.group_request()
         )
 
-        another_teacher_request = TeacherFactory.build()
-        another_teacher = university_service_admin.teacher.create_teacher(
-            another_teacher_request
+        student_request = TestData.student_request()
+        student_request.group_id = group.id
+        student = student_factory.create(
+            student_request=student_request
         )
 
-        another_student_request = StudentFactory.build()
+        another_student_request = TestData.student_request()
         another_student_request.group_id = group.id
-        another_student = university_service_admin.student.create_student(
-            another_student_request
+        another_student = student_factory.create(
+            student_request=another_student_request
         )
 
-        third_student_request = StudentFactory.build()
-        third_student_request.group_id = another_group.id
-        third_student = university_service_admin.student.create_student(
-            third_student_request
+        teacher = teacher_factory.create(
+            teacher_request=TestData.teacher_request()
+        )
+
+        another_teacher = teacher_factory.create(
+            teacher_request=TestData.teacher_request()
         )
 
         steps.create_grades(
             teacher_id=teacher.id,
-            student_id=student_in_group.id,
+            student_id=student.id,
             grades=[5, 4, 3],
         )
 
         steps.create_grades(
             teacher_id=another_teacher.id,
-            student_id=student_in_group.id,
+            student_id=student.id,
+            grades=[2, 2],
+        )
+
+        steps.create_grades(
+            teacher_id=teacher.id,
+            student_id=another_student.id,
+            grades=[1, 1],
+        )
+
+        expected_stats = GradeStatisticResponse(
+            count=5,
+            min=2,
+            max=5,
+            avg=3.2,
+        )
+
+        actual_stats = university_service_admin.get_grade_statistics(
+            student_id=student.id,
+        )
+
+        assert actual_stats == expected_stats, (
+            f"Expected: {expected_stats}, but got: {actual_stats}"
+        )
+
+    def test_get_grades_stats_with_teacher_filter(
+            self,
+            university_service_admin,
+            group_factory,
+            student_factory,
+            teacher_factory,
+    ):
+        steps = UniversitySteps(university_service_admin)
+
+        group = group_factory.create(
+            group_request=TestData.group_request()
+        )
+
+        student_request = TestData.student_request()
+        student_request.group_id = group.id
+        student = student_factory.create(
+            student_request=student_request
+        )
+
+        teacher = teacher_factory.create(
+            teacher_request=TestData.teacher_request()
+        )
+
+        another_teacher = teacher_factory.create(
+            teacher_request=TestData.teacher_request()
+        )
+
+        steps.create_grades(
+            teacher_id=teacher.id,
+            student_id=student.id,
+            grades=[5, 4, 3],
+        )
+
+        steps.create_grades(
+            teacher_id=another_teacher.id,
+            student_id=student.id,
+            grades=[2, 2],
+        )
+
+        expected_stats = GradeStatisticResponse(
+            count=3,
+            min=3,
+            max=5,
+            avg=4.0,
+        )
+
+        actual_stats = university_service_admin.get_grade_statistics(
+            teacher_id=teacher.id,
+        )
+
+        assert actual_stats == expected_stats, (
+            f"Expected: {expected_stats}, but got: {actual_stats}"
+        )
+
+    def test_get_grades_stats_with_group_filter(
+            self,
+            university_service_admin,
+            group_factory,
+            student_factory,
+            teacher_factory,
+    ):
+        steps = UniversitySteps(university_service_admin)
+
+        group = group_factory.create(
+            group_request=TestData.group_request()
+        )
+
+        another_group = group_factory.create(
+            group_request=TestData.group_request()
+        )
+
+        student_request = TestData.student_request()
+        student_request.group_id = group.id
+        student = student_factory.create(
+            student_request=student_request
+        )
+
+        another_student_request = TestData.student_request()
+        another_student_request.group_id = another_group.id
+        another_student = student_factory.create(
+            student_request=another_student_request
+        )
+
+        teacher = teacher_factory.create(
+            teacher_request=TestData.teacher_request()
+        )
+
+        steps.create_grades(
+            teacher_id=teacher.id,
+            student_id=student.id,
+            grades=[5, 4, 3],
+        )
+
+        steps.create_grades(
+            teacher_id=teacher.id,
+            student_id=another_student.id,
+            grades=[1, 1],
+        )
+
+        expected_stats = GradeStatisticResponse(
+            count=3,
+            min=3,
+            max=5,
+            avg=4.0,
+        )
+
+        actual_stats = university_service_admin.get_grade_statistics(
+            group_id=group.id,
+        )
+
+        assert actual_stats == expected_stats, (
+            f"Expected: {expected_stats}, but got: {actual_stats}"
+        )
+
+    def test_get_grades_stats_with_combined_filters(
+            self,
+            university_service_admin,
+            group_factory,
+            student_factory,
+            teacher_factory,
+    ):
+        steps = UniversitySteps(university_service_admin)
+
+        group = group_factory.create(
+            group_request=TestData.group_request()
+        )
+
+        student_request = TestData.student_request()
+        student_request.group_id = group.id
+        student = student_factory.create(
+            student_request=student_request
+        )
+
+        teacher = teacher_factory.create(
+            teacher_request=TestData.teacher_request()
+        )
+
+        another_group = group_factory.create(
+            group_request=TestData.group_request()
+        )
+
+        another_teacher = teacher_factory.create(
+            teacher_request=TestData.teacher_request()
+        )
+
+        another_student_request = TestData.student_request()
+        another_student_request.group_id = group.id
+        another_student = student_factory.create(
+            student_request=another_student_request
+        )
+
+        third_student_request = TestData.student_request()
+        third_student_request.group_id = another_group.id
+        third_student = student_factory.create(
+            student_request=third_student_request
+        )
+
+        steps.create_grades(
+            teacher_id=teacher.id,
+            student_id=student.id,
+            grades=[5, 4, 3],
+        )
+
+        steps.create_grades(
+            teacher_id=another_teacher.id,
+            student_id=student.id,
             grades=[2, 2],
         )
 
@@ -68,8 +259,8 @@ class TestGetGradesStats:
             avg=4.0,
         )
 
-        actual_stats = university_service_admin.grade.get_grade_statistics(
-            student_id=student_in_group.id,
+        actual_stats = university_service_admin.get_grade_statistics(
+            student_id=student.id,
             teacher_id=teacher.id,
             group_id=group.id,
         )
@@ -78,52 +269,53 @@ class TestGetGradesStats:
             f"Expected: {expected_stats}, but got: {actual_stats}"
         )
 
-        for student in (student_in_group, another_student, third_student):
-            grades_response = university_service_admin.grade.grade_helper.get_grades(
-                student_id=student.id,
-            )
-            for grade in grades_response.json():
-                university_service_admin.grade.delete_grade(grade["id"])
-
-        university_service_admin.student.delete_student(another_student.id)
-        university_service_admin.student.delete_student(third_student.id)
-        university_service_admin.teacher.delete_teacher(another_teacher.id)
-        university_service_admin.group.delete_group(another_group.id)
-
     def test_get_grades_stats_with_teacher_and_group_filters(
             self,
             university_service_admin,
-            group,
-            student_in_group,
-            teacher,
+            group_factory,
+            student_factory,
+            teacher_factory,
     ):
         steps = UniversitySteps(university_service_admin)
 
-        another_group_request = GroupFactory.build()
-        another_group = university_service_admin.group.create_group(
-            another_group_request
+        group = group_factory.create(
+            group_request=TestData.group_request()
         )
-        another_teacher_request = TeacherFactory.build()
-        another_teacher = university_service_admin.teacher.create_teacher(
-            another_teacher_request
+
+        student_request = TestData.student_request()
+        student_request.group_id = group.id
+        student = student_factory.create(
+            student_request=student_request
+        )
+
+        teacher = teacher_factory.create(
+            teacher_request=TestData.teacher_request()
+        )
+
+        another_group = group_factory.create(
+            group_request=TestData.group_request()
+        )
+
+        another_teacher = teacher_factory.create(
+            teacher_request=TestData.teacher_request()
         )
 
         steps.create_grades(
             teacher_id=teacher.id,
-            student_id=student_in_group.id,
+            student_id=student.id,
             grades=[5, 4, 3],
         )
 
         steps.create_grades(
             teacher_id=another_teacher.id,
-            student_id=student_in_group.id,
+            student_id=student.id,
             grades=[2, 2],
         )
 
-        another_student_request = StudentFactory.build()
+        another_student_request = TestData.student_request()
         another_student_request.group_id = another_group.id
-        another_student = university_service_admin.student.create_student(
-            another_student_request
+        another_student = student_factory.create(
+            student_request=another_student_request
         )
 
         steps.create_grades(
@@ -139,7 +331,7 @@ class TestGetGradesStats:
             avg=4.0,
         )
 
-        actual_stats = university_service_admin.grade.get_grade_statistics(
+        actual_stats = university_service_admin.get_grade_statistics(
             teacher_id=teacher.id,
             group_id=group.id,
         )
@@ -151,16 +343,23 @@ class TestGetGradesStats:
     def test_get_grades_stats_with_no_matching_grades(
             self,
             university_service_admin,
-            group,
-            teacher,
+            group_factory,
+            student_factory,
+            teacher_factory,
     ):
-        student_request = StudentFactory.build()
+        group = group_factory.create(
+            group_request=TestData.group_request()
+        )
+
+        student_request = TestData.student_request()
         student_request.group_id = group.id
+        student = student_factory.create(
+            student_request=student_request
+        )
 
-        student = university_service_admin.student.create_student(student_request)
-        student_id = student.id
-
-        university_service_admin.student.delete_student(student_id)
+        teacher = teacher_factory.create(
+            teacher_request=TestData.teacher_request()
+        )
 
         expected_stats = GradeStatisticResponse(
             count=0,
@@ -169,12 +368,12 @@ class TestGetGradesStats:
             avg=None,
         )
 
-        actual_stats = university_service_admin.grade.get_grade_statistics(
-            student_id=student_id,
+        actual_stats = university_service_admin.get_grade_statistics(
+            student_id=student.id,
             teacher_id=teacher.id,
             group_id=group.id,
         )
 
         assert expected_stats == actual_stats, (
-            f"Expected: '{expected_stats}', but got: '{actual_stats}'"
+            f"Expected: {expected_stats}, but got: {actual_stats}"
         )
