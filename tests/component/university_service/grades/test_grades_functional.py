@@ -1,7 +1,6 @@
 from services.university.helpers.grade_helper import GradeHelper
-from services.university.models.grade_statistic_response import GradeStatisticResponse
+from services.general.models.success_response import SuccessResponse as DetailResponse
 from services.university.university_service import UniversityService
-from tests.steps.university_steps import UniversitySteps
 from utils.api_utils import ApiUtils
 
 
@@ -14,8 +13,9 @@ class TestGradeFunctional:
 
         response = grade_helper.get_grades_stats(student_id=1, teacher_id=1, group_id=1)
 
-        expected = {"detail": "Invalid JWT token"}
-        actual = response.json()
+        expected = DetailResponse(detail="Invalid JWT token")
+
+        actual = DetailResponse.model_validate(response.json())
 
         assert actual == expected, \
             f"Expected: {expected}, but got: {actual}"
@@ -25,8 +25,11 @@ class TestGradeFunctional:
 
         response = grade_helper.get_grades_stats(student_id=1, teacher_id=1, group_id=1)
 
-        expected = {"detail": "Access denied"}
-        actual = response.json()
+        expected = DetailResponse(
+            detail="Access denied"
+        )
+
+        actual = DetailResponse.model_validate(response.json())
 
         assert actual == expected, \
             f"Expected: {expected}, but got: {actual}"

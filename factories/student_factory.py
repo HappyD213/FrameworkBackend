@@ -1,21 +1,29 @@
-from random import choice
-
-from faker import Faker
-
-from services.university.models.base_student import DegreeEnum
 from services.university.models.student_request import StudentRequest
+from services.university.models.student_response import StudentResponse
+from services.university.university_service import UniversityService
 
 
 class StudentFactory:
-    faker = Faker()
+    def __init__(self, university_service_admin: UniversityService):
+        self.api = university_service_admin
+        self.created_students = []
 
-    @classmethod
-    def build(cls) -> StudentRequest:
-        return StudentRequest(
-            first_name=cls.faker.first_name(),
-            last_name=cls.faker.last_name(),
-            email=cls.faker.email(),
-            degree=choice(list(DegreeEnum)),
-            phone=cls.faker.numerify("+7##########"),
-            group_id=1,
-        )
+    def create(self, student_request: StudentRequest) -> StudentResponse:
+        student = self.api.create_student(student_request)
+        self.created_students.append(student)
+        return student
+
+    def create_many(self, student_requests: list[StudentRequest]) -> list[StudentResponse]:
+        return [
+            self.create(student_request)
+            for student_request in student_requests
+        ]
+
+    def cleanup(self):
+        for student in reversed(self.created_students):
+            grades = self.api.get_grades(student_id=student.id)
+
+            for grade in grades.root:
+                self.api.delete_grade(grade.id)
+
+            self.api.delete_student(student.id)

@@ -1,10 +1,10 @@
 from services.auth.models.validation_error_response import ValidationErrorResponse
-from factories.user_factory import UserFactory
+from utils.test_data import TestData
 
 
 class TestUserRegistration:
     def test_user_created(self, auth_service_anonym):
-        register_request = UserFactory.build()
+        register_request = TestData.register_request()
         response = auth_service_anonym.register_user(register_request)
         expected_detail = "User registered"
 
@@ -12,7 +12,7 @@ class TestUserRegistration:
             f'Expected: "{expected_detail}", but got: "{response.detail}"'
 
     def test_user_conflict(self, auth_service_anonym):
-        register_request = UserFactory.build()
+        register_request = TestData.register_request()
         auth_service_anonym.register_user(register_request=register_request)
 
         response = auth_service_anonym.register_user(register_request=register_request)

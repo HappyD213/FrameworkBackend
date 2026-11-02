@@ -2,17 +2,32 @@ from services.university.helpers.grade_helper import GradeHelper
 from services.university.university_service import UniversityService
 from tests.steps.university_steps import UniversitySteps
 from utils.api_utils import ApiUtils
+from utils.test_data import TestData
 
 
 class TestGradeContract:
     def test_get_grades_stats_success(
             self,
             university_api_utils_admin,
-            group,
-            student_in_group,
-            teacher,
+            group_factory,
+            student_factory,
+            teacher_factory,
     ):
         university_service = UniversityService(university_api_utils_admin)
+
+        group = group_factory.create(
+            group_request=TestData.group_request()
+        )
+
+        student_request = TestData.student_request()
+        student_request.group_id = group.id
+        student_in_group = student_factory.create(
+            student_request=student_request
+        )
+
+        teacher = teacher_factory.create(
+            teacher_request=TestData.teacher_request()
+        )
 
         steps = UniversitySteps(university_service)
         grades = [5, 4, 3]

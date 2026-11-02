@@ -8,10 +8,10 @@ from services.auth.helpers.authorization_helper import AuthorizationHelper
 from services.auth.models.login_request import LoginRequest
 from services.university.university_service import UniversityService
 from utils.api_utils import ApiUtils
-from factories.user_factory import UserFactory
 from factories.teacher_factory import TeacherFactory
 from factories.student_factory import StudentFactory
 from factories.group_factory import GroupFactory
+from utils.test_data import TestData
 
 load_dotenv()
 
@@ -65,7 +65,7 @@ def auth_service_anonym(auth_api_utils_anonym):
 
 @pytest.fixture(scope="function", autouse=False)
 def access_token(auth_service_anonym):
-    register_request = UserFactory.build()
+    register_request = TestData.register_request()
 
     auth_service_anonym.register_user(
         register_request=register_request
@@ -108,51 +108,30 @@ def university_service_admin(university_api_utils_admin):
     return university_service
 
 
-# Test entities
+# Factories
 
-@pytest.fixture(scope="function", autouse=False)
-def student_in_group(university_service_admin, group):
-    student_request = StudentFactory.build()
-    student_request.group_id = group.id
-
-    student = university_service_admin.student.create_student(student_request)
+@pytest.fixture(scope="function")
+def student_factory(university_service_admin):
+    factory = StudentFactory(university_service_admin)
     try:
-        yield student
+        yield factory
     finally:
-        grades_response = university_service_admin.grade.grade_helper.get_grades(
-            student_id=student.id,
-        )
-        grades = grades_response.json()
-
-        for grade in grades:
-            university_service_admin.grade.delete_grade(grade["id"])
-
-        university_service_admin.student.delete_student(student.id)
+        factory.cleanup()
 
 
-@pytest.fixture(scope="function", autouse=False)
-def teacher(university_service_admin):
-    teacher_request = TeacherFactory.build()
-    teacher = university_service_admin.teacher.create_teacher(teacher_request)
+@pytest.fixture(scope="function")
+def teacher_factory(university_service_admin):
+    factory = TeacherFactory(university_service_admin)
     try:
-        yield teacher
+        yield factory
     finally:
-        grades_response = university_service_admin.grade.grade_helper.get_grades(
-            teacher_id=teacher.id
-        )
-        grades = grades_response.json()
-
-        for grade in grades:
-            university_service_admin.grade.delete_grade(grade["id"])
-
-        university_service_admin.teacher.delete_teacher(teacher.id)
+        factory.cleanup()
 
 
-@pytest.fixture(scope="function", autouse=False)
-def group(university_service_admin):
-    group_request = GroupFactory.build()
-    group = university_service_admin.group.create_group(group_request)
+@pytest.fixture(scope="function")
+def group_factory(university_service_admin):
+    factory = GroupFactory(university_service_admin)
     try:
-        yield group
+        yield factory
     finally:
-        university_service_admin.group.delete_group(group.id)
+        factory.cleanup()

@@ -4,12 +4,12 @@ from services.auth.models.validation_error_response import ValidationErrorRespon
 from services.auth.models.login_request import LoginRequest
 from services.general.models.success_response import SuccessResponse
 from utils.soft_assert import SoftAssert
-from factories.user_factory import UserFactory
+from utils.test_data import TestData
 
 
 class TestUserLogin:
     def test_user_login(self, auth_service_anonym, ):
-        register_request = UserFactory.build()
+        register_request = TestData.register_request()
         auth_service_anonym.register_user(register_request=register_request)
         login_response = auth_service_anonym.login_user(LoginRequest(username=register_request.username,
                                                                      password=register_request.password))
@@ -29,7 +29,7 @@ class TestUserLogin:
             soft.check(payload["username"] == register_request.username)
 
     def test_invalid_login_credentials(self, auth_helper_anonym, auth_service_anonym):
-        register_request = UserFactory.build()
+        register_request = TestData.register_request()
         auth_service_anonym.register_user(register_request=register_request)
 
         response = auth_helper_anonym.post_login(
