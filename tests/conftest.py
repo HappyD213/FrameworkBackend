@@ -16,7 +16,7 @@ from utils.test_data import TestData
 load_dotenv()
 
 
-# API Utils — without authentication
+# DB fixtures
 
 @pytest.fixture(scope="session", autouse=False)
 def db_connection():
@@ -34,6 +34,8 @@ def db_connection():
         connection.close()
 
 
+# API Utils — without authentication
+
 @pytest.fixture(scope="function", autouse=False)
 def university_api_utils_anonym():
     api_utils = ApiUtils(url=UniversityService.SERVICE_URL)
@@ -44,40 +46,6 @@ def university_api_utils_anonym():
 def auth_api_utils_anonym():
     api_utils = ApiUtils(url=AuthService.SERVICE_URL)
     return api_utils
-
-
-# Helpers — without authentication
-
-@pytest.fixture(scope="function", autouse=False)
-def auth_helper_anonym(auth_api_utils_anonym):
-    return AuthorizationHelper(auth_api_utils_anonym)
-
-
-# Services — without authentication
-
-@pytest.fixture(scope="function", autouse=False)
-def auth_service_anonym(auth_api_utils_anonym):
-    auth_service = AuthService(auth_api_utils_anonym)
-    return auth_service
-
-
-# Authentication
-
-@pytest.fixture(scope="function", autouse=False)
-def access_token(auth_service_anonym):
-    register_request = TestData.register_request()
-
-    auth_service_anonym.register_user(
-        register_request=register_request
-    )
-
-    username = register_request.username
-    password = register_request.password
-
-    login_response = auth_service_anonym.login_user(login_request=LoginRequest(username=username,
-                                                                               password=password))
-
-    return login_response.access_token
 
 
 # API Utils — with authentication
@@ -100,12 +68,46 @@ def university_api_utils_admin(access_token):
     return api_utils
 
 
+# Helpers — without authentication
+
+@pytest.fixture(scope="function", autouse=False)
+def auth_helper_anonym(auth_api_utils_anonym):
+    return AuthorizationHelper(auth_api_utils_anonym)
+
+
+# Services — without authentication
+
+@pytest.fixture(scope="function", autouse=False)
+def auth_service_anonym(auth_api_utils_anonym):
+    auth_service = AuthService(auth_api_utils_anonym)
+    return auth_service
+
+
 # Services — with authentication
 
 @pytest.fixture(scope="function", autouse=False)
 def university_service_admin(university_api_utils_admin):
     university_service = UniversityService(university_api_utils_admin)
     return university_service
+
+
+# Authentication
+
+@pytest.fixture(scope="function", autouse=False)
+def access_token(auth_service_anonym):
+    register_request = TestData.register_request()
+
+    auth_service_anonym.register_user(
+        register_request=register_request
+    )
+
+    username = register_request.username
+    password = register_request.password
+
+    login_response = auth_service_anonym.login_user(login_request=LoginRequest(username=username,
+                                                                               password=password))
+
+    return login_response.access_token
 
 
 # Factories

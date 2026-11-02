@@ -29,6 +29,7 @@ class UniversityService(BaseService):
         self.group_helper = GroupHelper(self.api_utils)
 
     # Grade
+
     def create_grade(self, grade_request: GradeRequest) -> GradeResponse:
         response = self.grade_helper.post_grade(
             data=grade_request.model_dump()
@@ -74,6 +75,7 @@ class UniversityService(BaseService):
         return GradeStatisticResponse.model_validate(response.json())
 
     # Group
+
     def create_group(self, group_request: GroupRequest) -> GroupResponse:
         response = self.group_helper.post_group(
             json=group_request.model_dump()
@@ -85,6 +87,7 @@ class UniversityService(BaseService):
         return SuccessResponse(**response.json())
 
     # Teacher
+
     def create_teacher(
             self, teacher_request: TeacherRequest
     ) -> TeacherResponse:
