@@ -4,11 +4,11 @@ from faker import Faker
 
 from services.auth.models.register_request import RegisterRequest
 from services.university.models.base_student import DegreeEnum
+from services.university.models.base_teacher import SubjectEnum
+from services.university.models.grade_request import GradeRequest
+from services.university.models.group_request import GroupRequest
 from services.university.models.student_request import StudentRequest
 from services.university.models.teacher_request import TeacherRequest
-from services.university.models.group_request import GroupRequest
-from services.university.models.grade_request import GradeRequest
-from services.university.models.base_teacher import SubjectEnum
 
 
 class TestData:

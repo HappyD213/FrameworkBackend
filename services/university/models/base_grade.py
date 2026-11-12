@@ -1,5 +1,6 @@
-from pydantic import BaseModel, ConfigDict, Field
 from typing import ClassVar
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class BaseGrade(BaseModel):

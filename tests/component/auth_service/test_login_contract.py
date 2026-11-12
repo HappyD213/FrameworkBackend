@@ -1,5 +1,6 @@
-from services.auth.helpers.authorization_helper import AuthorizationHelper
 from faker import Faker
+
+from services.auth.helpers.authorization_helper import AuthorizationHelper
 
 faker = Faker()
 
