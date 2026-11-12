@@ -47,7 +47,7 @@ def auth_service_readiness():
         try:
             response = requests.get(AuthService.SERVICE_URL + "/docs")
             response.raise_for_status()
-        except:
+        except requests.exceptions.RequestException:
             time.sleep(1)  # try again in 1 second
         else:
             break
@@ -63,7 +63,7 @@ def university_service_readiness():
         try:
             response = requests.get(UniversityService.SERVICE_URL + "/docs")
             response.raise_for_status()
-        except:
+        except requests.exceptions.RequestException:
             time.sleep(1)  # try again in 1 second
         else:
             break
