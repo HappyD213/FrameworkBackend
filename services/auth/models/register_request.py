@@ -1,5 +1,6 @@
-from pydantic import BaseModel, ConfigDict, EmailStr, model_validator, Field
 from typing import ClassVar
+
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 
 
 class RegisterRequest(BaseModel):

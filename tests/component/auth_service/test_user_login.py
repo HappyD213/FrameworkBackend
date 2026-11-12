@@ -1,7 +1,7 @@
 import jwt
 
-from services.auth.models.validation_error_response import ValidationErrorResponse
 from services.auth.models.login_request import LoginRequest
+from services.auth.models.validation_error_response import ValidationErrorResponse
 from services.general.models.success_response import SuccessResponse
 from utils.soft_assert import SoftAssert
 from utils.test_data import TestData

@@ -1,6 +1,6 @@
 import requests.status_codes
-
 from faker import Faker
+
 from services.university.helpers.group_helper import GroupHelper
 
 faker = Faker()

@@ -51,7 +51,7 @@ class TestGradeContract:
             f"Expected: '{expected_code}' but got '{response.status_code}'"
 
     def test_get_grades_stats_not_authorized(self):
-        headers = {"Authorization": f"Bearer dawdadad"}
+        headers = {"Authorization": "Bearer dawdadad"}
         api_utils = ApiUtils(url=UniversityService.SERVICE_URL, headers=headers)
         grade_helper = GradeHelper(api_utils)
         response = grade_helper.get_grades_stats(

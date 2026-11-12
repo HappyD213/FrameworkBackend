@@ -1,12 +1,12 @@
-from services.university.helpers.grade_helper import GradeHelper
 from services.general.models.success_response import SuccessResponse as DetailResponse
+from services.university.helpers.grade_helper import GradeHelper
 from services.university.university_service import UniversityService
 from utils.api_utils import ApiUtils
 
 
 class TestGradeFunctional:
     def test_get_not_authorized(self):
-        headers = {"Authorization": f"Bearer dawdadad"}
+        headers = {"Authorization": "Bearer dawdadad"}
         api_utils = ApiUtils(url=UniversityService.SERVICE_URL, headers=headers)
 
         grade_helper = GradeHelper(api_utils)
