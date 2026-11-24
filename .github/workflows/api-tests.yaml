@@ -7,6 +7,7 @@ on:
     branches: [ develop ]
 
 jobs:
+  # Проверка качества кода
   lint:
     runs-on: ubuntu-latest
 
