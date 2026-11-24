@@ -73,7 +73,7 @@ jobs:
         if: always()
         run: docker compose down
 
-
+  # Генерация allure отчета
   allure-report:
     needs: test
     runs-on: ubuntu-latest
