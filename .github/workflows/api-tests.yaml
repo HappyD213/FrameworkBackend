@@ -25,9 +25,9 @@ jobs:
       - name: Run Ruff
         run: ruff check .
 
-
   test:
     runs-on: ubuntu-latest
+    environment: .env
 
     steps:
       - name: Checkout repository
