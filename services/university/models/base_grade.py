@@ -1,0 +1,14 @@
+from typing import ClassVar
+
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class BaseGrade(BaseModel):
+    MIX_GRADE_VALUE: ClassVar[int] = 0
+    MAX_GRADE_VALUE: ClassVar[int] = 5
+
+    model_config = ConfigDict(extra="forbid")
+
+    teacher_id: int
+    student_id: int
+    grade: int = Field(ge=MIX_GRADE_VALUE, le=MAX_GRADE_VALUE)
